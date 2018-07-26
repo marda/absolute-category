@@ -1,6 +1,6 @@
 {
-  "name": "absolute.app/projects",
-  "description": "Absolute/Module/Project",
+  "name": "absolute.app/category",
+  "description": "Absolute/Module/Category",
   "type": "package",
   "license": ["MIT", "BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
   "minimum-stability": "dev",
