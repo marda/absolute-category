@@ -124,6 +124,53 @@ class CategoryManager extends BaseManager
         return $this->database->table('todo_category')->insert(['todo_id' => $todoId, 'category_id' => $categoryId]);
     }
 
+    private function _getEventList($eventId)
+    {
+        $ret = array();
+        $resultDb = $this->database->table('category')->where(':event_category.event_id', $eventId);
+        foreach ($resultDb as $db)
+        {
+            $object = $this->_getCategory($db);
+            $ret[] = $object;
+        }
+        return $ret;
+    }
+
+    private function _getEventItem($eventId, $categoryId)
+    {
+        return $this->_getCategory($this->database->table('category')->where(':event_category.event_id', $eventId)->where("category_id", $categoryId)->fetch());
+    }
+
+    public function _categoryEventDelete($eventId, $categoryId)
+    {
+        return $this->database->table('event_category')->where('event_id', $eventId)->where('category_id', $categoryId)->delete();
+    }
+
+    public function _categoryEventCreate($eventId, $categoryId)
+    {
+        return $this->database->table('event_category')->insert(['event_id' => $eventId, 'category_id' => $categoryId]);
+    }
+
+    public function getEventList($eventId)
+    {
+        return $this->_getEventList($eventId);
+    }
+
+    public function getEventItem($eventId, $categoryId)
+    {
+        return $this->_getEventItem($eventId, $categoryId);
+    }
+
+    public function categoryEventDelete($eventId, $categoryId)
+    {
+        return $this->_categoryEventDelete($eventId, $categoryId);
+    }
+
+    public function categoryEventCreate($eventId, $categoryId)
+    {
+        return $this->_categoryEventCreate($eventId, $categoryId);
+    }
+
     public function getTodoList($todoId)
     {
         return $this->_getTodoList($todoId);
