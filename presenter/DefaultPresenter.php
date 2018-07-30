@@ -72,17 +72,15 @@ class DefaultPresenter extends CategoryBasePresenter
 
     private function _putRequest($id)
     {
-        $post = json_decode($this->httpRequest->getRawBody(), true);
-        unset($post['id']);
-        unset($post['user_id']);
+        $post = json_decode($this->httpRequest->getRawBody(),true);
         $this->jsonResponse->payload = [];
         $this->categoryCRUDManager->update($id, $post);
     }
 
     private function _postRequest($urlId)
     {
-        $post = json_decode($this->httpRequest->getRawBody(), true);
-        $ret = $this->categoryCRUDManager->create($this->user->id, $post);
+        $post = json_decode($this->httpRequest->getRawBody());
+        $ret = $this->categoryCRUDManager->create($this->user->id, $post->name, $post->default, $post->image);
         if (!$ret)
         {
             $this->jsonResponse->payload = [];
