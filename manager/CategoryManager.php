@@ -151,6 +151,53 @@ class CategoryManager extends BaseManager
         return $this->database->table('event_category')->insert(['event_id' => $eventId, 'category_id' => $categoryId]);
     }
 
+    private function _getMenuList($menuId)
+    {
+        $ret = array();
+        $resultDb = $this->database->table('category')->where(':menu_category.menu_id', $menuId);
+        foreach ($resultDb as $db)
+        {
+            $object = $this->_getCategory($db);
+            $ret[] = $object;
+        }
+        return $ret;
+    }
+
+    private function _getMenuItem($menuId, $categoryId)
+    {
+        return $this->_getCategory($this->database->table('category')->where(':menu_category.menu_id', $menuId)->where("category_id", $categoryId)->fetch());
+    }
+
+    public function _categoryMenuDelete($menuId, $categoryId)
+    {
+        return $this->database->table('menu_category')->where('menu_id', $menuId)->where('category_id', $categoryId)->delete();
+    }
+
+    public function _categoryMenuCreate($menuId, $categoryId)
+    {
+        return $this->database->table('menu_category')->insert(['menu_id' => $menuId, 'category_id' => $categoryId]);
+    }
+
+    public function getMenuList($menuId)
+    {
+        return $this->_getMenuList($menuId);
+    }
+
+    public function getMenuItem($menuId, $categoryId)
+    {
+        return $this->_getMenuItem($menuId, $categoryId);
+    }
+
+    public function categoryMenuDelete($menuId, $categoryId)
+    {
+        return $this->_categoryMenuDelete($menuId, $categoryId);
+    }
+
+    public function categoryMenuCreate($menuId, $categoryId)
+    {
+        return $this->_categoryMenuCreate($menuId, $categoryId);
+    }
+
     public function getEventList($eventId)
     {
         return $this->_getEventList($eventId);
