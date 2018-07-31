@@ -205,6 +205,53 @@ class CategoryManager extends BaseManager
         return $this->database->table('page_category')->insert(['page_id' => $pageId, 'category_id' => $categoryId]);
     }
 
+    private function _getProjectList($pageId)
+    {
+        $ret = array();
+        $resultDb = $this->database->table('category')->where(':page_category.page_id', $pageId);
+        foreach ($resultDb as $db)
+        {
+            $object = $this->_getCategory($db);
+            $ret[] = $object;
+        }
+        return $ret;
+    }
+
+    private function _getProjectItem($pageId, $categoryId)
+    {
+        return $this->_getCategory($this->database->table('category')->where(':page_category.page_id', $pageId)->where("category_id", $categoryId)->fetch());
+    }
+
+    public function _categoryProjectDelete($pageId, $categoryId)
+    {
+        return $this->database->table('page_category')->where('page_id', $pageId)->where('category_id', $categoryId)->delete();
+    }
+
+    public function _categoryProjectCreate($pageId, $categoryId)
+    {
+        return $this->database->table('page_category')->insert(['page_id' => $pageId, 'category_id' => $categoryId]);
+    }
+
+    public function getProjectList($pageId)
+    {
+        return $this->_getProjectList($pageId);
+    }
+
+    public function getProjectItem($pageId, $categoryId)
+    {
+        return $this->_getProjectItem($pageId, $categoryId);
+    }
+
+    public function categoryProjectDelete($pageId, $categoryId)
+    {
+        return $this->_categoryProjectDelete($pageId, $categoryId);
+    }
+
+    public function categoryProjectCreate($pageId, $categoryId)
+    {
+        return $this->_categoryProjectCreate($pageId, $categoryId);
+    }
+
     public function getPageList($pageId)
     {
         return $this->_getPageList($pageId);
