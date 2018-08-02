@@ -72,23 +72,41 @@ class DefaultPresenter extends CategoryBasePresenter
 
     private function _putRequest($id)
     {
-        $post = json_decode($this->httpRequest->getRawBody(),true);
+        $post = json_decode($this->httpRequest->getRawBody(), true);
         $this->jsonResponse->payload = [];
-        $this->categoryCRUDManager->update($id, $post);
+        $ret = $this->categoryCRUDManager->update($id, $post);
+        if (!$ret)
+            $this->httpResponse->setCode(Response::S500_INTERNAL_SERVER_ERROR);
+        else
+            $this->httpResponse->setCode(Response::S201_CREATED);
     }
 
     private function _postRequest($urlId)
     {
-        $post = json_decode($this->httpRequest->getRawBody());
-        $ret = $this->categoryCRUDManager->create($this->user->id, $post->name, $post->default, $post->image);
-        if (!$ret)
+        $post = json_decode($this->httpRequest->getRawBody(),true);
+        $id = $this->categoryCRUDManager->create($this->user->id, $post["name"], $post["default"], $post["image"]);
+        if (!$id)
         {
             $this->jsonResponse->payload = [];
             $this->httpResponse->setCode(Response::S500_INTERNAL_SERVER_ERROR);
         }
         else
         {
-            $this->jsonResponse->payload = [];
+            if (isset($post['events']))
+                $this->categoryCRUDManager->connectEvents($post['events'], $id);
+            if (isset($post['menus']))
+                $this->categoryCRUDManager->connectMenus($post['menus'], $id);
+            if (isset($post['notes']))
+                $this->categoryCRUDManager->connectNotes($post['notes'], $id);
+            if (isset($post['pages']))
+                $this->categoryCRUDManager->connectPages($post['pages'], $id);
+            if (isset($post['project']))
+                $this->categoryCRUDManager->connectProjects($post['project'], $id);
+            if (isset($post['users']))
+                $this->categoryCRUDManager->connectUsers($post['users'], $id);
+            if (isset($post['todos']))
+                $this->categoryCRUDManager->connectTodos($post['todos'], $id);
+            
             $this->httpResponse->setCode(Response::S201_CREATED);
         }
     }
